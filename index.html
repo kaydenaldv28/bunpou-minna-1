@@ -1,0 +1,1684 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minna no Nihongo - Master Bunpou Bab 1-25</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Canvas Confetti for Achievements -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Custom Font Google -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sakura: {
+                            100: '#ffe4e8',
+                            200: '#fecdd3',
+                            400: '#fb7185',
+                            500: '#ff4d6d',
+                            600: '#e11d48',
+                        },
+                        matcha: {
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                        },
+                        jpnavy: '#0f172a',
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        jp: ['Noto Sans JP', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+        }
+        .font-jp {
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+        
+        /* Perspective & Card Flip */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .transform-style-3d {
+            transform-style: preserve-3d;
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- TOP NAVBAR -->
+    <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-rose-100 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('dashboard')">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sakura-500 to-rose-400 flex items-center justify-center text-white font-bold text-xl shadow-md shadow-sakura-200">
+                    文
+                </div>
+                <div>
+                    <h1 class="font-bold text-slate-800 text-lg leading-tight flex items-center gap-2">
+                        Bunpou Master <span class="bg-sakura-100 text-sakura-600 text-xs px-2 py-0.5 rounded-full font-semibold">Minna 1-25</span>
+                    </h1>
+                    <p class="text-xs text-slate-500">Belajar Tata Bahasa Jepang Interaktif</p>
+                </div>
+            </div>
+
+            <!-- Stats Bar (XP & Level) -->
+            <div class="flex items-center gap-3 sm:gap-6">
+                <div class="flex items-center gap-2 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-xl">
+                    <i data-lucide="zap" class="w-4 h-4 text-amber-500 fill-amber-500"></i>
+                    <div>
+                        <div class="text-[10px] text-amber-700 uppercase font-bold leading-none">Total XP</div>
+                        <div class="text-sm font-extrabold text-amber-600 leading-none mt-0.5" id="user-xp">0</div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 bg-rose-50 border border-rose-200 px-3 py-1.5 rounded-xl">
+                    <i data-lucide="award" class="w-4 h-4 text-sakura-500"></i>
+                    <div>
+                        <div class="text-[10px] text-sakura-700 uppercase font-bold leading-none">Level</div>
+                        <div class="text-sm font-extrabold text-sakura-600 leading-none mt-0.5" id="user-level">1</div>
+                    </div>
+                </div>
+
+                <button id="mobile-menu-btn" class="md:hidden p-2 text-slate-600 hover:text-sakura-500" onclick="toggleSidebar()">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <div class="flex-1 max-w-7xl w-full mx-auto flex overflow-hidden">
+
+        <!-- SIDEBAR / CHAPTER LIST -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-20 w-72 bg-white border-r border-slate-200 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out md:static flex flex-col pt-16 md:pt-0">
+            <!-- Search & Filter -->
+            <div class="p-4 border-b border-slate-100">
+                <div class="relative">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-slate-400"></i>
+                    <input type="text" id="search-input" placeholder="Cari bab / pola kalimat..." 
+                           class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sakura-400 transition"
+                           onkeyup="filterChapters()">
+                </div>
+            </div>
+
+            <!-- Chapter Navigation List -->
+            <div class="flex-1 overflow-y-auto p-3 space-y-1" id="chapter-list">
+                <!-- Dynamically populated chapters -->
+            </div>
+
+            <!-- Sidebar Footer -->
+            <div class="p-4 border-t border-slate-100 bg-slate-50/50">
+                <div class="flex items-center justify-between text-xs text-slate-500">
+                    <span>Progress Selesai:</span>
+                    <span id="progress-text" class="font-bold text-sakura-600">0 / 25 Bab</span>
+                </div>
+                <div class="w-full bg-slate-200 rounded-full h-2 mt-2 overflow-hidden">
+                    <div id="progress-bar" class="bg-gradient-to-r from-sakura-400 to-sakura-600 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- BACKDROP FOR MOBILE SIDEBAR -->
+        <div id="sidebar-backdrop" class="fixed inset-0 bg-slate-900/40 z-10 hidden md:hidden" onclick="toggleSidebar()"></div>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+
+            <!-- DASHBOARD VIEW -->
+            <section id="view-dashboard" class="space-y-6">
+                <!-- Hero Banner -->
+                <div class="relative overflow-hidden bg-gradient-to-r from-slate-900 via-rose-950 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl">
+                    <div class="relative z-10 max-w-2xl">
+                        <span class="inline-block bg-sakura-500/30 text-sakura-200 text-xs px-3 py-1 rounded-full font-semibold border border-sakura-400/30 mb-3">
+                            🌸 Japanese Grammar N5 Level
+                        </span>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Kuasai Tata Bahasa Minna no Nihongo Bab 1 sampai 25!</h2>
+                        <p class="mt-2 text-slate-300 text-sm leading-relaxed">
+                            Belajar rumus, contoh kalimat audio TTS, latihan kartu interaktif (flashcards), dan uji kemampuanmu dengan kuis gamifikasi seru.
+                        </p>
+                        <div class="mt-6 flex flex-wrap gap-3">
+                            <button onclick="selectChapter(1)" class="bg-sakura-500 hover:bg-sakura-600 text-white font-semibold px-5 py-2.5 rounded-xl shadow-lg shadow-sakura-500/30 transition flex items-center gap-2 text-sm">
+                                <i data-lucide="play-circle" class="w-4 h-4"></i> Mulai Bab 1
+                            </button>
+                            <button onclick="switchTab('all-cards')" class="bg-white/10 hover:bg-white/20 text-white font-medium px-4 py-2.5 rounded-xl border border-white/20 transition text-sm">
+                                Quick Flashcards
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Decorative Circle Background -->
+                    <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-sakura-500/20 rounded-full blur-3xl pointer-events-none"></div>
+                </div>
+
+                <!-- Grid Categories / Quick Stats -->
+                <div>
+                    <h3 class="text-base font-bold text-slate-800 mb-3 flex items-center gap-2">
+                        <i data-lucide="grid" class="w-5 h-5 text-sakura-500"></i> Daftar Bab Pembelajaran
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="dashboard-grid">
+                        <!-- Dynamically populated cards -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- CHAPTER DETAIL / GRAMMAR VIEW -->
+            <section id="view-chapter" class="hidden space-y-6">
+                <!-- Chapter Header Navigation -->
+                <div class="flex flex-wrap items-center justify-between gap-4 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <button onclick="switchTab('dashboard')" class="p-2 hover:bg-slate-100 rounded-xl text-slate-500 transition">
+                            <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                        </button>
+                        <div>
+                            <span id="ch-badge" class="text-xs font-bold text-sakura-600 bg-sakura-100 px-2.5 py-1 rounded-md">Bab 1</span>
+                            <h2 id="ch-title" class="text-xl font-extrabold text-slate-800 mt-1">Judul Bab</h2>
+                        </div>
+                    </div>
+
+                    <!-- Mode Toggle (Materi vs Flashcard vs Kuis) -->
+                    <div class="flex bg-slate-100 p-1 rounded-xl">
+                        <button id="btn-mode-materi" onclick="setChapterMode('materi')" class="px-3.5 py-1.5 text-xs font-bold rounded-lg transition bg-white text-slate-800 shadow-sm">
+                            📘 Rangkuman
+                        </button>
+                        <button id="btn-mode-flashcard" onclick="setChapterMode('flashcard')" class="px-3.5 py-1.5 text-xs font-bold rounded-lg transition text-slate-600 hover:text-slate-900">
+                            🎴 Flashcards
+                        </button>
+                        <button id="btn-mode-quiz" onclick="setChapterMode('quiz')" class="px-3.5 py-1.5 text-xs font-bold rounded-lg transition text-slate-600 hover:text-slate-900 flex items-center gap-1">
+                            🎯 Kuis Bab
+                        </button>
+                    </div>
+                </div>
+
+                <!-- MATERI CONTENT SECTION -->
+                <div id="subview-materi" class="space-y-4">
+                    <!-- Grammar Cards container -->
+                    <div id="grammar-cards-container" class="space-y-4">
+                        <!-- Populated by JS -->
+                    </div>
+                    
+                    <!-- Chapter Action Footer -->
+                    <div class="flex justify-between items-center pt-4 border-t border-slate-200">
+                        <button id="btn-prev-ch" onclick="prevChapter()" class="px-4 py-2 border border-slate-200 rounded-xl text-sm font-semibold hover:bg-slate-50 transition flex items-center gap-1.5">
+                            <i data-lucide="chevron-left" class="w-4 h-4"></i> Bab Sebelumnya
+                        </button>
+                        <button onclick="setChapterMode('quiz')" class="px-5 py-2.5 bg-sakura-500 text-white rounded-xl text-sm font-bold hover:bg-sakura-600 shadow-lg shadow-sakura-200 transition flex items-center gap-2">
+                            Uji Kuis Bab Ini <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                        <button id="btn-next-ch" onclick="nextChapter()" class="px-4 py-2 border border-slate-200 rounded-xl text-sm font-semibold hover:bg-slate-50 transition flex items-center gap-1.5">
+                            Bab Selanjutnya <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- FLASHCARD MODE SECTION -->
+                <div id="subview-flashcard" class="hidden space-y-6 flex flex-col items-center">
+                    <div class="text-center">
+                        <p class="text-xs text-slate-500 font-medium">Klik kartu untuk melihat Jawaban / Penjelasan</p>
+                        <div class="text-sm font-bold text-sakura-600 mt-1" id="fc-counter">1 / 4</div>
+                    </div>
+
+                    <!-- Flip Card Component -->
+                    <div class="w-full max-w-lg h-72 perspective-1000 cursor-pointer" onclick="flipCard()">
+                        <div id="flashcard-inner" class="relative w-full h-full duration-500 transform-style-3d transition-transform rounded-3xl shadow-xl border border-slate-200 bg-white">
+                            <!-- Front Side (Rumus & Judul) -->
+                            <div class="absolute inset-0 w-full h-full rounded-3xl p-6 backface-hidden flex flex-col justify-between bg-gradient-to-br from-white to-rose-50/30">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xs font-bold text-sakura-600 bg-sakura-100 px-2.5 py-1 rounded-full">Pola Kalimat</span>
+                                    <i data-lucide="rotate-cw" class="w-4 h-4 text-slate-400"></i>
+                                </div>
+                                <div class="text-center my-auto">
+                                    <h3 id="fc-front-title" class="text-xl font-extrabold text-slate-800">Title</h3>
+                                    <!-- Kotak Rumus Flashcard (Kuning Terang High Contrast) -->
+                                    <div id="fc-front-pattern" class="mt-3 inline-block bg-slate-950 text-yellow-300 font-mono text-base px-4 py-2 rounded-xl shadow-inner font-bold border border-amber-500/40">
+                                        Pattern
+                                    </div>
+                                </div>
+                                <p class="text-center text-xs text-slate-400">Sentuh/Klik kartu untuk balik 🔄</p>
+                            </div>
+
+                            <!-- Back Side (Penjelasan & Contoh) -->
+                            <div class="absolute inset-0 w-full h-full rounded-3xl p-6 backface-hidden rotate-y-180 flex flex-col justify-between bg-slate-900 text-white">
+                                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                                    <span class="text-xs font-bold text-amber-300">Penjelasan & Contoh</span>
+                                    <i data-lucide="rotate-cw" class="w-4 h-4 text-slate-400"></i>
+                                </div>
+                                <div class="text-center my-auto space-y-2">
+                                    <p id="fc-back-meaning" class="text-sm text-slate-200 leading-relaxed">Meaning</p>
+                                    <div class="p-3 bg-slate-800/80 rounded-xl text-left font-jp text-amber-300 text-sm mt-2 font-medium" id="fc-back-example">
+                                        Example
+                                    </div>
+                                </div>
+                                <p class="text-center text-xs text-slate-500">Klik lagi untuk kembali ke depan</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Flashcard Controls -->
+                    <div class="flex items-center gap-4">
+                        <button onclick="prevFlashcard()" class="p-3 rounded-full bg-white border border-slate-200 shadow hover:bg-slate-50 transition">
+                            <i data-lucide="arrow-left" class="w-5 h-5 text-slate-700"></i>
+                        </button>
+                        <button onclick="nextFlashcard()" class="p-3 rounded-full bg-sakura-500 text-white shadow-lg shadow-sakura-200 hover:bg-sakura-600 transition">
+                            <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- QUIZ MODE SECTION -->
+                <div id="subview-quiz" class="hidden max-w-2xl mx-auto space-y-6">
+                    <div id="quiz-start-card" class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm text-center space-y-4">
+                        <div class="w-16 h-16 bg-sakura-100 text-sakura-600 rounded-2xl flex items-center justify-center mx-auto text-2xl font-bold">
+                            🎯
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800">Siap Uji Pemahaman Bab Ini?</h3>
+                        <p class="text-sm text-slate-500 max-w-md mx-auto">
+                            Selesaikan kuis pilihan ganda ini untuk menguji ingatanmu dan dapatkan +50 XP serta tanda centang kelulusan bab!
+                        </p>
+                        <button onclick="startQuiz()" class="px-6 py-3 bg-sakura-500 hover:bg-sakura-600 text-white font-bold rounded-xl shadow-lg shadow-sakura-200 transition">
+                            Mulai Kuis Sekarang
+                        </button>
+                    </div>
+
+                    <!-- Active Quiz Interface -->
+                    <div id="quiz-active-card" class="hidden bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+                        <!-- Quiz Header -->
+                        <div class="flex justify-between items-center text-xs font-bold text-slate-400 border-b pb-3">
+                            <span id="quiz-progress-text">Soal 1 dari 3</span>
+                            <span class="text-amber-500 flex items-center gap-1"><i data-lucide="zap" class="w-3.5 h-3.5"></i> +50 XP</span>
+                        </div>
+
+                        <!-- Question -->
+                        <div>
+                            <p id="quiz-question" class="text-base sm:text-lg font-bold text-slate-800">
+                                Question text here...
+                            </p>
+                        </div>
+
+                        <!-- Options -->
+                        <div id="quiz-options" class="space-y-3">
+                            <!-- Dynamic Options -->
+                        </div>
+
+                        <!-- Explanation Banner (hidden by default) -->
+                        <div id="quiz-feedback" class="hidden p-4 rounded-xl text-sm font-medium"></div>
+
+                        <!-- Next Question Button -->
+                        <div class="flex justify-end pt-2">
+                            <button id="btn-next-question" onclick="nextQuestion()" disabled class="px-5 py-2.5 bg-slate-300 text-slate-500 font-bold rounded-xl transition cursor-not-allowed">
+                                Lanjut <i data-lucide="arrow-right" class="w-4 h-4 inline"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Quiz Result -->
+                    <div id="quiz-result-card" class="hidden bg-white p-8 rounded-3xl border border-slate-200 shadow-sm text-center space-y-4">
+                        <div id="quiz-score-icon" class="text-5xl">🎉</div>
+                        <h3 class="text-2xl font-extrabold text-slate-800">Kuis Selesai!</h3>
+                        <p class="text-sm text-slate-500" id="quiz-score-text">Skor kamu: 100 / 100</p>
+
+                        <div class="p-4 bg-slate-50 rounded-2xl flex justify-around text-center border border-slate-100">
+                            <div>
+                                <div class="text-xs text-slate-400 font-medium">XP Diperoleh</div>
+                                <div class="text-lg font-extrabold text-amber-500" id="quiz-xp-gained">+50 XP</div>
+                            </div>
+                            <div class="border-r border-slate-200"></div>
+                            <div>
+                                <div class="text-xs text-slate-400 font-medium">Status Bab</div>
+                                <div class="text-lg font-extrabold text-matcha-600" id="quiz-status-text">LULUS</div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-center gap-3 pt-2">
+                            <button onclick="startQuiz()" class="px-4 py-2.5 border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition text-sm">
+                                Coba Lagi
+                            </button>
+                            <button onclick="switchTab('dashboard')" class="px-5 py-2.5 bg-sakura-500 text-white font-bold rounded-xl hover:bg-sakura-600 shadow-md transition text-sm">
+                                Kembali ke Dashboard
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- AUDIO SYNTHESIS SCRIPT & DATA -->
+    <script>
+        /* ==========================================================================
+           1. DATASTRUCTURE: GRAMMAR DATA (BAB 1 - 25 COMPLETE COMPREHENSIVE)
+           ========================================================================== */
+        const GRAMMAR_DATA = [
+            {
+                chapter: 1,
+                title: "Perkenalan diri & Identitas Subjek",
+                summary: "Pola dasar pembentukan kalimat perkenalan, predikat kata benda, dan interogatif.",
+                grammarPoints: [
+                    {
+                        title: "N1 wa N2 desu (N1 adalah N2)",
+                        pattern: "N1 は N2 です",
+                        meaning: "Menyatakan bahwa subjek (N1) adalah N2. Partikel は (wa) bertindak sebagai penanda topik.",
+                        example: "わたしは たなかです。",
+                        romaji: "Watashi wa Tanaka desu.",
+                        translation: "Saya adalah Tanaka."
+                    },
+                    {
+                        title: "N1 wa N2 ja arimasen (N1 bukan N2)",
+                        pattern: "N1 は N2 ではありません / じゃないです",
+                        meaning: "Bentuk negatif dari 'desu' (Bukan / Tidak).",
+                        example: "わたしは がくせい ではありません。",
+                        romaji: "Watashi wa gakusei ja arimasen.",
+                        translation: "Saya bukan seorang siswa."
+                    },
+                    {
+                        title: "Kalimat Tanya (... desu ka?)",
+                        pattern: "S + ですか",
+                        meaning: "Menambahkan partikel か (ka) di akhir kalimat untuk membuat pertanyaan.",
+                        example: "あのひとは せんせいですか。",
+                        romaji: "Ano hito wa sensei desu ka.",
+                        translation: "Apakah orang itu seorang guru?"
+                    },
+                    {
+                        title: "Partikel mo (Juga / Pun)",
+                        pattern: "N も N2 です",
+                        meaning: "Menggantikan partikel は (wa) untuk menyatakan 'juga'.",
+                        example: "サントスさんも ブラジルじん です。",
+                        romaji: "Santosu-san mo Burajiru-jin desu.",
+                        translation: "Tuan Santos juga orang Brasil."
+                    }
+                ],
+                quiz: [
+                    {
+                        q: "Bagaimana cara mengatakan 'Saya bukan dokter' dalam bahasa Jepang?",
+                        options: ["わたしは いしゃ です", "わたしは いしゃ ではありません", "わたしも いしゃ です", "わたしは いしゃ ですか"],
+                        correct: 1,
+                        exp: "Bentuk negatif dari 'desu' adalah 'ja arimasen' / 'dewa arimasen'."
+                    },
+                    {
+                        q: "Partikel apa yang digunakan untuk menggantikan 'wa' jika bermakna 'juga'?",
+                        options: ["か (ka)", "の (no)", "も (mo)", "と (to)"],
+                        correct: 2,
+                        exp: "Partikel も (mo) berarti 'juga'."
+                    }
+                ]
+            },
+            {
+                chapter: 2,
+                title: "Kata Tunjuk Benda (Kore, Sore, Are) & Kepemilikan",
+                summary: "Menunjukkan benda di dekat pembicara/pendengar dan menyatakan kepemilikan benda.",
+                grammarPoints: [
+                    {
+                        title: "Kore / Sore / Are",
+                        pattern: "これ / それ / あれ は N です",
+                        meaning: "Kore (Ini - dekat pembicara), Sore (Itu - dekat lawan bicara), Are (Itu - jauh dari keduanya).",
+                        example: "これは ほん です。",
+                        romaji: "Kore wa hon desu.",
+                        translation: "Ini adalah buku."
+                    },
+                    {
+                        title: "Kono N / Sono N / Ano N",
+                        pattern: "この / その / あの + Benda は ... です",
+                        meaning: "Kata tunjuk yang harus diikuti langsung oleh kata benda.",
+                        example: "この かさは わたし のです。",
+                        romaji: "Kono kasa wa watashi no desu.",
+                        translation: "Payung ini adalah milik saya."
+                    },
+                    {
+                        title: "Partikel no (Kepemilikan)",
+                        pattern: "N1 の N2",
+                        meaning: "Menunjukkan kepemilikan atau penjelasan dari benda.",
+                        example: "これは わたしの かぎです。",
+                        romaji: "Kore wa watashi no kagi desu.",
+                        translation: "Ini adalah kunci milik saya."
+                    }
+                ],
+                quiz: [
+                    {
+                        q: "Kata tunjuk untuk benda yang berada dekat dengan LAWAN BICARA adalah...",
+                        options: ["Kore", "Sore", "Are", "Doko"],
+                        correct: 1,
+                        exp: "Sore digunakan untuk benda di dekat lawan bicara."
+                    }
+                ]
+            },
+            {
+                chapter: 3,
+                title: "Kata Tunjuk Tempat (Koko, Soko, Asoko) & Harga",
+                summary: "Menyatakan lokasi tempat, ruangan, dan menanyakan keberadaan lokasi/harga.",
+                grammarPoints: [
+                    {
+                        title: "Koko / Soko / Asoko",
+                        pattern: "ここ / そこ / あそこ は Tempat です",
+                        meaning: "Koko (Sini), Soko (Situ), Asoko (Sana) menunjukkan lokasi.",
+                        example: "ここは きょうしつ です。",
+                        romaji: "Koko wa kyoushitsu desu.",
+                        translation: "Di sini adalah ruang kelas."
+                    },
+                    {
+                        title: "N wa Tempat desu",
+                        pattern: "N は Place です",
+                        meaning: "Menyatakan tempat keberadaan benda atau seseorang.",
+                        example: "お手洗いは あそこです。",
+                        romaji: "Oterai wa asoko desu.",
+                        translation: "Toilet ada di sebelah sana."
+                    },
+                    {
+                        title: "Menanyakan Lokasi (Doko / Dochira)",
+                        pattern: "N は どこ / どちら ですか",
+                        meaning: "Doko (Di mana), Dochira (Bentuk lebih sopan).",
+                        example: "エレベーターは どちらですか。",
+                        romaji: "Erebētā wa dochira desu ka.",
+                        translation: "Lift ada di mana / sebelah mana?"
+                    }
+                ],
+                quiz: [
+                    {
+                        q: "Kata yang lebih sopan untuk menanyakan lokasi (Di mana / Sebelah mana) adalah...",
+                        options: ["Doko", "Dokatte", "Dochira", "Dare"],
+                        correct: 2,
+                        exp: "Dochira adalah bentuk sopan dari doko."
+                    }
+                ]
+            },
+            {
+                chapter: 4,
+                title: "Waktu, Jam, dan Kata Kerja Waktu (masu / masen)",
+                summary: "Menyatakan jam/hari, jadwal kegiatan, dan perubahan bentuk kata kerja dasar.",
+                grammarPoints: [
+                    {
+                        title: "Jam dan Menit (ji / fun)",
+                        pattern: "今 ～時 ～分 です",
+                        meaning: "Ima ...-ji ...-fun desu (Sekarang jam ... menit ...).",
+                        example: "いま くじ はん です。",
+                        romaji: "Ima kuji han desu.",
+                        translation: "Sekarang jam 9 lewat setengah (9:30)."
+                    },
+                    {
+                        title: "Verb-masu / masen / mashita",
+                        pattern: "V-ます / V-ません / V-ました / V-ませんでした",
+                        meaning: "Perubahan kata kerja: Positif Futur, Negatif Futur, Lampau Positif, Lampau Negatif.",
+                        example: "わたしは まいにち べんきょうします。",
+                        romaji: "Watashi wa mainichi benkyou shimasu.",
+                        translation: "Saya belajar setiap hari."
+                    },
+                    {
+                        title: "Partikel kara ... made (Dari ... Sampai)",
+                        pattern: "Waktu/Tempat から Waktu/Tempat まで",
+                        meaning: "Menunjukkan titik awal (kara) dan akhir (made).",
+                        example: "９時から ５時まで はたらきます。",
+                        romaji: "Kuji kara goji made hatarakimasu.",
+                        translation: "Bekerja dari jam 9 sampai jam 5."
+                    }
+                ],
+                quiz: [
+                    {
+                        q: "Bentuk lampau positif dari 'hatarakimasu' (bekerja) adalah...",
+                        options: ["hatarakimasen", "hatarakimashita", "hatarakide", "hatarakimasen deshita"],
+                        correct: 1,
+                        exp: "Bentuk lampau positif kata kerja berakhiran -mashita."
+                    }
+                ]
+            },
+            {
+                chapter: 5,
+                title: "Perpindahan Lokasi & Transportasi (Ikimasu, Kimasu, Kaerimasu)",
+                summary: "Penggunaan kata kerja pergerakan dengan partikel e (ke), de (dengan alat), dan to (bersama).",
+                grammarPoints: [
+                    {
+                        title: "Tempat e ikimasu / kimasu / kaerimasu",
+                        pattern: "Tempat へ 行きます / 来ます / 帰ります",
+                        meaning: "Pergi / Datang / Pulang ke suatu tempat. Partikel へ dibaca 'e'.",
+                        example: "わたしは にほんへ いきます。",
+                        romaji: "Watashi wa Nihon e ikimasu.",
+                        translation: "Saya akan pergi ke Jepang."
+                    },
+                    {
+                        title: "Partikel de (Sarana Transportasi)",
+                        pattern: "Kendaraan で Tempat へ 行きます",
+                        meaning: "Menyatakan sarana transportasi yang digunakan.",
+                        example: "でんしゃで かえります。",
+                        romaji: "Densha de kaerimasu.",
+                        translation: "Pulang dengan menggunakan kereta."
+                    },
+                    {
+                        title: "Partikel to (Bersama Seseorang)",
+                        pattern: "Orang と Tempat へ 行きます",
+                        meaning: "Melakukan kegiatan/pergi bersama seseorang.",
+                        example: "ともだちと にほんへ きました。",
+                        romaji: "Tomodachi to Nihon e kimashita.",
+                        translation: "Datang ke Jepang bersama teman."
+                    }
+                ],
+                quiz: [
+                    {
+                        q: "Partikel apa yang digunakan untuk menyatakan 'pergi DENGAN bus'?",
+                        options: ["へ (e)", "に (ni)", "で (de)", "を (o)"],
+                        correct: 2,
+                        exp: "Partikel で (de) digunakan untuk menyatakan sarana transportasi."
+                    }
+                ]
+            },
+            {
+                chapter: 6,
+                title: "Kata Kerja Transitif & Partikel o",
+                summary: "Melakukan aksi terhadap objek (memakan, meminum, membeli) dan ajakan (issho ni).",
+                grammarPoints: [
+                    {
+                        title: "Objek o Kata Kerja",
+                        pattern: "N を V-ます",
+                        meaning: "Partikel を (o) menandai objek penderita dari kata kerja.",
+                        example: "ごはんを たべます。",
+                        romaji: "Gohan o tabemasu.",
+                        translation: "Makan nasi."
+                    },
+                    {
+                        title: "Partikel de (Tempat Aksi)",
+                        pattern: "Tempat で N を V-ます",
+                        meaning: "Partikel で menandai tempat berlangsungnya suatu aktivitas.",
+                        example: "レストランで ごはんを たべます。",
+                        romaji: "Resutoran de gohan o tabemasu.",
+                        translation: "Makan nasi di restoran."
+                    },
+                    {
+                        title: "Ajakan (V-mashou / V-masen ka)",
+                        pattern: "いっしょに V-ませんか / V-ましょう",
+                        meaning: "V-masen ka (Maukah melakukan bersama?), V-mashou (Ayo kita lakukan!).",
+                        example: "いっしょに おちゃを のみませんか。",
+                        romaji: "Issho ni ocha o nomimasen ka.",
+                        translation: "Maukah minum teh bersama-sama?"
+                    }
+                ],
+                quiz: [
+                    {
+                        q: "Kalimat ajakan yang bermakna 'Ayo kita minum!' secara langsung adalah...",
+                        options: ["Nomimasen", "Nomimashou", "Nomimasu ka", "Nomimashita"],
+                        correct: 1,
+                        exp: "V-mashou digunakan untuk mengajak secara langsung (Ayo...)."
+                    }
+                ]
+            },
+            {
+                chapter: 7,
+                title: "Alat, Bahasa, dan Memberi / Menerima (Agemasu, Moraimasu)",
+                summary: "Menggunakan alat/bahasa (de) dan transaksi pemberian hadiah.",
+                grammarPoints: [
+                    {
+                        title: "Alat / Bahasa de V",
+                        pattern: "Alat / Bahasa で V",
+                        meaning: "Menggunakan alat atau bahasa tertentu untuk melakukan aktivitas.",
+                        example: "はしで たべます。 / にほんごで はなします。",
+                        romaji: "Hashi de tabemasu. / Nihongo de hanashashimasu.",
+                        translation: "Makan dengan sumpit. / Berbicara dalam bahasa Jepang."
+                    },
+                    {
+                        title: "Agemasu (Memberikan)",
+                        pattern: "Penerima に N を あげます",
+                        meaning: "Subjek memberikan sesuatu kepada orang lain.",
+                        example: "わたしは やまださんに ほんを あげました。",
+                        romaji: "Watashi wa Yamada-san ni hon o agemashita.",
+                        translation: "Saya memberikan buku kepada Tuan Yamada."
+                    },
+                    {
+                        title: "Moraimasu (Menerima)",
+                        pattern: "Pemberi に/から N を もらいます",
+                        meaning: "Subjek menerima sesuatu dari orang lain.",
+                        example: "わたしは ははに プレゼントを もらいました。",
+                        romaji: "Watashi wa haha ni purezento o moraimashita.",
+                        translation: "Saya menerima hadiah dari ibu."
+                    }
+                ],
+                quiz: [
+                    {
+                        q: "Kata kerja untuk 'menerima sesuatu dari orang lain' adalah...",
+                        options: ["Agemasu", "Moraimasu", "Kashimasu", "Oshiemasu"],
+                        correct: 1,
+                        exp: "Moraimasu berarti menerima."
+                    }
+                ]
+            },
+            {
+                chapter: 8,
+                title: "Kata Sifat (i-Keiyoushi & na-Keiyoushi)",
+                summary: "Mengenal dua kelompok kata sifat Jepang, bentuk positif, dan negatifnya.",
+                grammarPoints: [
+                    {
+                        title: "i-Adjective & na-Adjective",
+                        pattern: "N wa i-Adj / na-Adj (desu)",
+                        meaning: "Kata sifat -i berakhiran i (takai, oishii). Kata sifat -na membutuhkan 'na' jika menempel pada kata benda (shizuka-na).",
+                        example: "富士山は 高いです。 / この町は 静かです。",
+                        romaji: "Fujisan wa takai desu. / Kono machi wa shizuka desu.",
+                        translation: "Gunung Fuji tinggi. / Kota ini tenang."
+                    },
+                    {
+                        title: "Negatif Kata Sifat",
+                        pattern: "i-Adj: -kunai desu | na-Adj: ja arimasen",
+                        meaning: "i-adj ganti 'i' terakhir menjadi 'kunai'. na-adj ditambah 'ja arimasen'.",
+                        example: "この本は おもしろくないです。",
+                        romaji: "Kono hon wa omoshirokunai desu.",
+                        translation: "Buku ini tidak menarik."
+                    }
+                ],
+                quiz: [
+                    {
+                        q: "Bentuk negatif dari kata sifat -i 'Oishii' (Enak) adalah...",
+                        options: ["Oishiisuki", "Oishikunai desu", "Oishii ja arimasen", "Oishimashou"],
+                        correct: 1,
+                        exp: "i-keiyoushi diubah akhiran i menjadi kunai."
+                    }
+                ]
+            },
+            {
+                chapter: 9,
+                title: "Kesukaan, Keahlian, dan Alasan (Suki, Jouzu, Kara)",
+                summary: "Menyatakan hal yang disukai/dikuasai dan memberikan alasan dengan kara.",
+                grammarPoints: [
+                    {
+                        title: "Suki / Kirai / Jouzu / Hoshii",
+                        pattern: "N が 好き / 上手 / ほしい です",
+                        meaning: "Objek kesukaan, keahlian, atau keinginan ditandai dengan partikel が (ga).",
+                        example: "わたしは にほんごが すきです。",
+                        romaji: "Watashi wa Nihongo ga suki desu.",
+                        translation: "Saya suka bahasa Jepang."
+                    },
+                    {
+                        title: "Alasan dengan Kara (Karena)",
+                        pattern: "Alasan (Kalimat) から、Kalimat Utama",
+                        meaning: "Kara diletakkan di akhir kalimat alasan.",
+                        example: "じかんが ありませんから、どこも いきません。",
+                        romaji: "Jikan ga arimasen kara, doko mo ikimasen.",
+                        translation: "Karena tidak ada waktu, tidak pergi ke mana-mana."
+                    }
+                ],
+                quiz: [
+                    {
+                        q: "Partikel apa yang dipakai sebelum kata 'suki' (suka)?",
+                        options: ["を (o)", "が (ga)", "に (ni)", "で (de)"],
+                        correct: 1,
+                        exp: "Kata sifat perasaan/keahlian seperti suki, jouzu menggunakan partikel が."
+                    }
+                ]
+            },
+            {
+                chapter: 10,
+                title: "Keberadaan Benda & Manusia (Imasu & Arimasu)",
+                summary: "Menyatakan keberadaan benda mati (Arimasu) dan makhluk hidup (Imasu).",
+                grammarPoints: [
+                    {
+                        title: "Arimasu vs Imasu",
+                        pattern: "Benda mati が あります / Benda hidup が います",
+                        meaning: "Arimasu untuk benda/tanaman. Imasu untuk manusia/hewan.",
+                        example: "部屋に テレビが あります。 / 庭に 犬が います。",
+                        romaji: "Heya ni terebi ga arimasu. / Niwa ni inu ga imasu.",
+                        translation: "Di kamar ada TV. / Di halaman ada anjing."
+                    },
+                    {
+                        title: "Lokasi Keberadaan (Place ni N ga imasu/arimasu)",
+                        pattern: "Tempat に N が あります/います",
+                        meaning: "Partikel に (ni) menandai keberadaan lokasi tempat.",
+                        example: "つくえの 上に 本が あります。",
+                        romaji: "Tsukue no ue ni hon ga arimasu.",
+                        translation: "Di atas meja ada buku."
+                    }
+                ],
+                quiz: [
+                    {
+                        q: "Untuk menyatakan 'Di rumah ada Kucing', kata kerja yang tepat adalah...",
+                        options: ["Arimasu", "Imasu", "Ikimasu", "Shimasu"],
+                        correct: 1,
+                        exp: "Kucing adalah benda hidup (hewan), jadi menggunakan Imasu."
+                    }
+                ]
+            },
+            {
+                chapter: 11,
+                title: "Kata Bilangan, Jumlah, dan Durasi Waktu",
+                summary: "Menyebutkan jumlah benda, orang, frekuensi, dan jangka waktu.",
+                grammarPoints: [
+                    {
+                        title: "Posisi Kata Bilangan",
+                        pattern: "N を Jumlah V",
+                        meaning: "Kata bilangan diletakkan langsung sebelum kata kerja tanpa partikel tambahan.",
+                        example: "りんごを ひとつ かいました。",
+                        romaji: "Ringo o hitotsu kaimashita.",
+                        translation: "Saya membeli satu buah apel."
+                    },
+                    {
+                        title: "Jangka Waktu & Frekuensi",
+                        pattern: "Jangka waktu に ～回 V",
+                        meaning: "Frekuensi melakukan sesuatu dalam jangka waktu tertentu.",
+                        example: "一か月に ２回 映画を 見ます。",
+                        romaji: "Ikkagetsu ni nikai eiga o mimasu.",
+                        translation: "Menonton film 2 kali dalam sebulan."
+                    }
+                ],
+                quiz: [
+                    {
+                        q: "Hitungan untuk 1 buah benda secara umum dalam bahasa Jepang adalah...",
+                        options: ["Hitori", "Hitotsu", "Ichiji", "Ikkai"],
+                        correct: 1,
+                        exp: "Hitotsu = 1 buah benda umum."
+                    }
+                ]
+            },
+            {
+                chapter: 12,
+                title: "Perbandingan & Kalimat Lampau Kata Sifat",
+                summary: "Perubahan bentuk lampau kata sifat dan membandingkan dua benda (yori / hou ga).",
+                grammarPoints: [
+                    {
+                        title: "Lampau Kata Sifat",
+                        pattern: "i-adj: -katta desu | na-adj: deshita",
+                        meaning: "Bentuk lampau dari kata sifat.",
+                        example: "きのうは あつかったです。 / きのうは ひまでした。",
+                        romaji: "Kinou wa atsukatta desu. / Kinou wa Hima deshita.",
+                        translation: "Kemarin panas. / Kemarin senggang."
+                    },
+                    {
+                        title: "Perbandingan (N1 wa N2 yori ...)",
+                        pattern: "N1 は N2 より Adj です",
+                        meaning: "N1 lebih ... daripada N2.",
+                        example: "新幹線は 飛行機より 遅いです。",
+                        romaji: "Shinkansen wa hikouki yori osoi desu.",
+                        translation: "Shinkansen lebih lambat daripada pesawat."
+                    }
+                ],
+                quiz: [
+                    {
+                        q: "Bentuk lampau dari kata sifat -i 'Atsui' (Panas) adalah...",
+                        options: ["Atsui deshita", "Atsukatta desu", "Atsukunai", "Atsuide"],
+                        correct: 1,
+                        exp: "i-keiyoushi lampau diubah akhiran i menjadi katta desu."
+                    }
+                ]
+            },
+            {
+                chapter: 13,
+                title: "Keinginan (Hoshii & V-tai) & Tujuan Pergi",
+                summary: "Menyatakan Keinginan benda (Hoshii), Keinginan aktivitas (V-tai), dan tujuan lokasi.",
+                grammarPoints: [
+                    {
+                        title: "Hoshii (Ingin Benda)",
+                        pattern: "N が ほしいです",
+                        meaning: "Menginginkan suatu benda/barang.",
+                        example: "わたしは 新しい 車が ほしいです。",
+                        romaji: "Watashi wa atarashii kuruma ga hoshii desu.",
+                        translation: "Saya ingin mobil baru."
+                    },
+                    {
+                        title: "V-tai (Ingin Melakukan Sesuatu)",
+                        pattern: "V-masu (buang masu) + たいです",
+                        meaning: "Ingin melakukan aksi/aktivitas.",
+                        example: "日本へ 行きたいです。",
+                        romaji: "Nihon e ikitai desu.",
+                        translation: "Saya ingin pergi ke Jepang."
+                    },
+                    {
+                        title: "Tujuan Pergi (Tempat e V-ni ikimasu)",
+                        pattern: "Tempat へ V- stem / N に 行きます",
+                        meaning: "Pergi untuk tujuan melakukan sesuatu.",
+                        example: "デパートへ 買い物に 行きます。",
+                        romaji: "Depāto e kaimono ni ikimasu.",
+                        translation: "Pergi ke mall untuk berbelanja."
+                    }
+                ],
+                quiz: [
+                    {
+                        q: "Bagaimana mengubah kata kerja 'Tabemasu' menjadi 'Ingin Makan'?",
+                        options: ["Tabehoshii", "Tabetai", "Tabemashou", "Tabetakatta"],
+                        correct: 1,
+                        exp: "Buang -masu dan tambahkan -tai (Tabemasu -> Tabetai)."
+                    }
+                ]
+            },
+            {
+                chapter: 14,
+                title: "Bentuk Te (V-te), Permohonan (te kudasai), dan Instruksi",
+                summary: "Pengenalan bentuk V-te dasar, permohonan bantuan (te kudasai), dan sedang melakukan (te imasu).",
+                grammarPoints: [
+                    {
+                        title: "Permohonan Tolong (V-te kudasai)",
+                        pattern: "V-て ください",
+                        meaning: "Silakan / Tolong lakukan sesuatu.",
+                        example: "ここに 名前を 書いてください。",
+                        romaji: "Koko ni namae o kaite kudasai.",
+                        translation: "Tolong tulis nama di sini."
+                    },
+                    {
+                        title: "Aktivitas Sedang Berlangsung (V-te imasu)",
+                        pattern: "V-て います",
+                        meaning: "Sedang melakukan aktivitas saat ini.",
+                        example: "今 雨が 降っています。",
+                        romaji: "Ima ame ga futte imasu.",
+                        translation: "Sekarang hujan sedang turun."
+                    }
+                ],
+                quiz: [
+                    {
+                        q: "Bentuk V-te dari 'Kakimasu' (menulis) adalah...",
+                        options: ["Kaete", "Kaite", "Kashite", "Katte"],
+                        correct: 1,
+                        exp: "Kaku/Kakimasu -> Kaite (Grup 1 berakhiran ki -> ite)."
+                    }
+                ]
+            },
+            {
+                chapter: 15,
+                title: "Izin (te mo ii desu) & Larangan (te wa ikemasen)",
+                summary: "Meminta atau memberikan izin serta melarang suatu perbuatan.",
+                grammarPoints: [
+                    {
+                        title: "Meminta / Memberi Izin",
+                        pattern: "V-て も いいですか / いいです",
+                        meaning: "Boleh / Bolehkah saya melakukan ...?",
+                        example: "写真を 撮っても いいですか。",
+                        romaji: "Shashin o totte mo ii desu ka.",
+                        translation: "Bolehkah saya mengambil foto?"
+                    },
+                    {
+                        title: "Larangan keras",
+                        pattern: "V-て は いけません",
+                        meaning: "Tidak boleh / Dilarang melakukan ...",
+                        example: "ここで たばこを 吸っては いけません。",
+                        romaji: "Koko de tabako o sutte wa ikemasen.",
+                        translation: "Dilarang merokok di sini."
+                    }
+                ],
+                quiz: [
+                    {
+                        q: "Pola kalimat untuk menyatakan 'Dilarang / Tidak boleh melakukan' adalah...",
+                        options: ["V-te mo ii desu", "V-te wa ikemasen", "V-te kudasai", "V-nai de kudasai"],
+                        correct: 1,
+                        exp: "V-te wa ikemasen bermakna dilarang/tidak boleh."
+                    }
+                ]
+            },
+            {
+                chapter: 16,
+                title: "Urutan Kegiatan (V-te kara) & Kata Sifat Bersambung",
+                summary: "Menghubungkan dua atau lebih kata kerja berurutan dan menggabungkan kata sifat.",
+                grammarPoints: [
+                    {
+                        title: "Urutan Kata Kerja (V1-te, V2-te, V3)",
+                        pattern: "V1-て、V2-て、V3-ます",
+                        meaning: "Melakukan aksi berurutan secara kronologis.",
+                        example: "朝 起きて、朝ごはんを 食べて、学校へ 行きます。",
+                        romaji: "Asa okite, asa gohan o tabete, gakkou e ikimasu.",
+                        translation: "Pagi bangun, makan pagi, lalu pergi ke sekolah."
+                    },
+                    {
+                        title: "Setelah Melakukan (V1-te kara)",
+                        pattern: "V1-て から、V2",
+                        meaning: "Setelah selesai V1, baru kemudian melakukan V2.",
+                        example: "仕事が 終わってから、泳ぎます。",
+                        romaji: "Shigoto ga owatte kara, oyogimasu.",
+                        translation: "Setelah pekerjaan selesai, saya berenang."
+                    }
+                ],
+                quiz: [
+                    {
+                        q: "Pola 'V1-te kara V2' berarti...",
+                        options: ["Sebelum melakukan V1", "Setelah melakukan V1, baru V2", "Sambil melakukan V1", "Jangan lakukan V1"],
+                        correct: 1,
+                        exp: "V-te kara bermakna setelah selesai V1 baru lanjut V2."
+                    }
+                ]
+            },
+            {
+                chapter: 17,
+                title: "Bentuk Nai (V-nai) & Keharusan (nakereba narimasen)",
+                summary: "Perubahan kata kerja bentuk negatif polos (Nai) dan ungkapan keharusan.",
+                grammarPoints: [
+                    {
+                        title: "Mohon Jangan (V-nai de kudasai)",
+                        pattern: "V-ない で ください",
+                        meaning: "Tolong jangan lakukan ...",
+                        example: "心配しないで ください。",
+                        romaji: "Shinpai shinai de kudasai.",
+                        translation: "Tolong jangan khawatir."
+                    },
+                    {
+                        title: "Harus Melakukan (nakereba narimasen)",
+                        pattern: "V-なければ なりません",
+                        meaning: "Harus / Wajib melakukan sesuatu.",
+                        example: "薬を 飲まなければ なりません。",
+                        romaji: "Kusuri o nomanakereba narimasen.",
+                        translation: "Harus minum obat."
+                    }
+                ],
+                quiz: [
+                    {
+                        q: "Ungkapan yang bermakna 'Harus / Wajib melakukan' adalah...",
+                        options: ["V-nai de kudasai", "V-nakereba narimasen", "V-te mo ii desu", "V-te wa ikemasen"],
+                        correct: 1,
+                        exp: "V-nakereba narimasen berarti harus/wajib."
+                    }
+                ]
+            },
+            {
+                chapter: 18,
+                title: "Bentuk Kamus (Jishokei) & Kemampuan (Koto ga dekimasu)",
+                summary: "Pengenalan bentuk dasar/kamus kata kerja dan menyatakan kemampuan/hobi.",
+                grammarPoints: [
+                    {
+                        title: "Kemampuan (Koto ga dekimasu)",
+                        pattern: "V-dictionary form こと が できます",
+                        meaning: "Bisa / Mampu melakukan suatu aktivitas.",
+                        example: "わたしは 漢字を 読むことが できます。",
+                        romaji: "Watashi wa kanji o yomu koto ga dekimasu.",
+                        translation: "Saya bisa membaca kanji."
+                    },
+                    {
+                        title: "Hobi (Shumi wa V-koto desu)",
+                        pattern: "趣味は V-dictionary form こと です",
+                        meaning: "Hobi saya adalah (melakukan sesuatu).",
+                        example: "趣味は 音楽を 聴くことです。",
+                        romaji: "Shumi wa ongaku o kiku koto desu.",
+                        translation: "Hobi saya adalah mendengarkan musik."
+                    }
+                ],
+                quiz: [
+                    {
+                        q: "Bentuk kata kerja yang digunakan sebelum 'koto ga dekimasu' adalah...",
+                        options: ["Bentuk Masu", "Bentuk Te", "Bentuk Kamus (Jishokei)", "Bentuk Nai"],
+                        correct: 2,
+                        exp: "Menggunakan bentuk dasar / kamus (Jishokei)."
+                    }
+                ]
+            },
+            {
+                chapter: 19,
+                title: "Bentuk Ta (V-ta) & Pengalaman (Koto ga arimasu)",
+                summary: "Bentuk lampau informal (Ta-form) untuk menyatakan pengalaman pernah melakukan sesuatu.",
+                grammarPoints: [
+                    {
+                        title: "Pengalaman (V-ta koto ga arimasu)",
+                        pattern: "V-た こと が あります",
+                        meaning: "Pernah mengalami / melakukan sesuatu.",
+                        example: "富士山に 登ったことが あります。",
+                        romaji: "Fujisan ni nobotta koto ga arimasu.",
+                        translation: "Saya pernah mendaki Gunung Fuji."
+                    },
+                    {
+                        title: "Kegiatan Acak (V1-tari, V2-tari shimasu)",
+                        pattern: "V1-たり、V2-たり します",
+                        meaning: "Melakukan kegiatan contoh seperti V1, V2, dan lain-lain.",
+                        example: "日曜日 本を 読んだり、テレビを 見たり します。",
+                        romaji: "Nichiyoubi hon o yondari, terebi o mitari shimasu.",
+                        translation: "Hari minggu membaca buku, menonton TV, dll."
+                    }
+                ],
+                quiz: [
+                    {
+                        q: "Pola untuk menyatakan 'Pernah berpengalaman melakukan...' adalah...",
+                        options: ["V-ta koto ga arimasu", "V-te koto ga arimasu", "V-ru koto ga dekimasu", "V-nai de kudasai"],
+                        correct: 0,
+                        exp: "V-ta koto ga arimasu bermakna pernah berpengalaman."
+                    }
+                ]
+            },
+            {
+                chapter: 20,
+                title: "Gaya Bahasa Informal / Kasual (Futsuukei)",
+                summary: "Perubahan lawan bicara dari bahasa sopan (Teineikei) ke percakapan biasa/akrab.",
+                grammarPoints: [
+                    {
+                        title: "Bentuk Biasa (Futsuukei)",
+                        pattern: "Perubahan kata kerja/sifat ke bentuk biasa",
+                        meaning: "Digunakan saat berbicara dengan teman sebaya, keluarga, atau bawahan.",
+                        example: "明日 東京へ 行く？ (Iku?) - うん、行く。(Iku.)",
+                        romaji: "Ashita Toukyou e iku? - Un, iku.",
+                        translation: "Besok mau pergi ke Tokyo? - Ya, pergi."
+                    }
+                ],
+                quiz: [
+                    {
+                        q: "Bentuk kasual/informal dari 'IKIMASU' saat bertanya adalah...",
+                        options: ["Ikimasu ka", "Iku?", "Ikite?", "Ikatta?"],
+                        correct: 1,
+                        exp: "Bentuk kamus 'Iku' dengan intonasi naik dipakai untuk bertanya secara kasual."
+                    }
+                ]
+            },
+            {
+                chapter: 21,
+                title: "Opini & Pendapat (To omoimasu / To iimashita)",
+                summary: "Menyatakan pendapat pribadi (Saya pikir...) dan mengutip ucapan orang lain.",
+                grammarPoints: [
+                    {
+                        title: "Berpendapat (To omoimasu)",
+                        pattern: "Kalimat (Futsuukei) と 思います",
+                        meaning: "Saya pikir / menurut pendapat saya ...",
+                        example: "日本は 物価が 高いと 思います。",
+                        romaji: "Nihon wa bukka ga takai to omoimasu.",
+                        translation: "Saya pikir biaya hidup di Jepang mahal."
+                    },
+                    {
+                        title: "Kutipan (To iimashita)",
+                        pattern: "Kalimat と 言いました",
+                        meaning: "Berkata bahwa / Mengutip kalimat seseorang.",
+                        example: "田中さんは 明日 休むと 言いました。",
+                        romaji: "Tanaka-san wa ashita yasumu to iimashita.",
+                        translation: "Tuan Tanaka berkata bahwa besok dia libur."
+                    }
+                ],
+                quiz: [
+                    {
+                        q: "Ungkapan 'To omoimasu' digunakan untuk...",
+                        options: ["Melarang", "Menyatakan pendapat/pemikiran", "Meminta izin", "Menyuruh"],
+                        correct: 1,
+                        exp: "To omoimasu bermakna 'saya pikir / berpendapat'."
+                    }
+                ]
+            },
+            {
+                chapter: 22,
+                title: "Klausul Modifikasi Kata Benda (Rentaishousetsu)",
+                summary: "Menerangkan kata benda menggunakan kalimat anak (klausul kata kerja).",
+                grammarPoints: [
+                    {
+                        title: "Anak Kalimat Menerangkan Kata Benda",
+                        pattern: "[Kalimat Futsuukei] + Kata Benda",
+                        meaning: "Kata benda yang dijelaskan oleh aktivitas di depannya.",
+                        example: "これは わたしが 昨日に 買った 本です。",
+                        romaji: "Kore wa watashi ga kinou ni katta hon desu.",
+                        translation: "Ini adalah buku yang saya beli kemarin."
+                    }
+                ],
+                quiz: [
+                    {
+                        q: "Terjemahkan: 'Orang yang memakai topi'",
+                        options: ["Boushi o kaburimasu hito", "Boushi o kabutta hito", "Boushi no hito", "Boushi de hito"],
+                        correct: 1,
+                        exp: "Menggunakan bentuk biasa/lampau kata kerja sebelum kata benda (Kabutta hito)."
+                    }
+                ]
+            },
+            {
+                chapter: 23,
+                title: "Waktu Pengandaian (Toki) & Pengandaian Pasti (To)",
+                summary: "Penggunaan Toki (Ketika / Saat) dan Partikel To (Jika / Setiap kali).",
+                grammarPoints: [
+                    {
+                        title: "Toki (Ketika / Saat)",
+                        pattern: "V-dictionary / V-ta / Adj とき、...",
+                        meaning: "Menyatakan kondisi waktu terjadinya suatu peristiwa.",
+                        example: "図書館で 本を 借りるとき、カードが いります。",
+                        romaji: "Toshokan de hon o kariru toki, kādo ga irimasu.",
+                        translation: "Saat meminjam buku di perpustakaan, memerlukan kartu."
+                    },
+                    {
+                        title: "Partikel To (Kondisi Alami / Mesin)",
+                        pattern: "V-dictionary と、...",
+                        meaning: "Jika melakukan A, maka pasti B terjadi (hukum alam/mekanis).",
+                        example: "この ボタンを 押すと、お釣りが出ます。",
+                        romaji: "Kono botan o osu to, otsuri ga demasu.",
+                        translation: "Jika menekan tombol ini, uang kembalian akan keluar."
+                    }
+                ],
+                quiz: [
+                    {
+                        q: "Partikel pengandaian mutlak untuk operasi tombol/mesin adalah...",
+                        options: ["と (to)", "ば (ba)", "たら (tara)", "なら (nara)"],
+                        correct: 0,
+                        exp: "Partikel 'To' digunakan untuk akibat pasti seperti tombol mesin."
+                    }
+                ]
+            },
+            {
+                chapter: 24,
+                title: "Kuremasu, Kureta, dan Pertolongan Kebaikan",
+                summary: "Kebaikan memberi/menerima bantuan aktivitas (Te agemasu, Te kuremasu, Te moraimasu).",
+                grammarPoints: [
+                    {
+                        title: "Kuremasu (Memberikan kepada SAYA)",
+                        pattern: "Pemberi が わたしに N を くれます",
+                        meaning: "Orang lain memberikan barang kepada SAYA / keluarga saya.",
+                        example: "佐藤さんは わたしに 花を くれました。",
+                        romaji: "Satou-san wa watashi ni hana o kuremashita.",
+                        translation: "Ibu Satou memberikan bunga kepada saya."
+                    },
+                    {
+                        title: "V-te kuremasu (Melakukan kebaikan untuk saya)",
+                        pattern: "Orang が わたしに V-て くれます",
+                        meaning: "Orang lain melakukan suatu aktivitas/bantuan demi saya.",
+                        example: "母は わたしに 朝ごはんを 作って くれました。",
+                        romaji: "Haha wa watashi ni asa gohan o tsukutte kuremashita.",
+                        translation: "Ibu telah membuatkan sarapan untuk saya."
+                    }
+                ],
+                quiz: [
+                    {
+                        q: "Kata kerja untuk 'Orang lain memberikan barang KEPADA SAYA' adalah...",
+                        options: ["Agemasu", "Moraimasu", "Kuremasu", "Kashimasu"],
+                        correct: 2,
+                        exp: "Kuremasu khusus digunakan jika penerimanya adalah 'Saya' (Watashi)."
+                    }
+                ]
+            },
+            {
+                chapter: 25,
+                title: "Pengandaian (Tara) & Pengandaian Berlawanan (Demo)",
+                summary: "Pengandaian bersyarat (Jika - Tara) dan kondisi bertentangan (Meskipun - Demo).",
+                grammarPoints: [
+                    {
+                        title: "Pengandaian Tara (Jika ...)",
+                        pattern: "V-た ら / N・Adj だったら、...",
+                        meaning: "Jika / Seandainya syarat A terpenuhi, maka B.",
+                        example: "雨が 降ったら、出かけません。",
+                        romaji: "Ame ga futtara, dekakemasen.",
+                        translation: "Jika hujan turun, saya tidak akan keluar."
+                    },
+                    {
+                        title: "Meskipun / Walaupun (Demo / Temo)",
+                        pattern: "V-て も / Adj-て も、...",
+                        meaning: "Meskipun A terjadi, B tetap berlaku.",
+                        example: "高くても、買いたいです。",
+                        romaji: "Takakutemo, kaitai desu.",
+                        translation: "Meskipun mahal, saya ingin membelinya."
+                    }
+                ],
+                quiz: [
+                    {
+                        q: "Pola 'Takakutemo' berasal dari kata Takai yang bermakna...",
+                        options: ["Jika mahal", "Meskipun mahal", "Karena mahal", "Sebelum mahal"],
+                        correct: 1,
+                        exp: "V-temo / Adj-temo bermakna 'Meskipun / Walaupun'."
+                    }
+                ]
+            }
+        ];
+
+        /* ==========================================================================
+           2. STATE MANAGEMENT & LOCAL STORAGE
+           ========================================================================== */
+        let state = {
+            currentChapter: 1,
+            completedChapters: JSON.parse(localStorage.getItem('mnn_completed')) || [],
+            xp: parseInt(localStorage.getItem('mnn_xp')) || 0,
+            level: 1,
+            activeMode: 'materi', // 'materi', 'flashcard', 'quiz'
+            flashcardIndex: 0,
+            isCardFlipped: false,
+            quizIndex: 0,
+            quizScore: 0
+        };
+
+        /* ==========================================================================
+           3. INITIALIZATION & UI RENDERERS
+           ========================================================================== */
+        window.onload = function() {
+            lucide.createIcons();
+            updateUserStats();
+            renderSidebar();
+            renderDashboard();
+            selectChapter(1);
+        };
+
+        function calculateLevel(xp) {
+            return Math.floor(xp / 100) + 1;
+        }
+
+        function updateUserStats() {
+            state.level = calculateLevel(state.xp);
+            document.getElementById('user-xp').innerText = state.xp;
+            document.getElementById('user-level').innerText = state.level;
+
+            // Update Progress Bar
+            const totalDone = state.completedChapters.length;
+            const percentage = Math.round((totalDone / 25) * 100);
+            document.getElementById('progress-text').innerText = `${totalDone} / 25 Bab`;
+            document.getElementById('progress-bar').style.width = `${percentage}%`;
+
+            // Save Storage
+            localStorage.setItem('mnn_xp', state.xp);
+            localStorage.setItem('mnn_completed', JSON.stringify(state.completedChapters));
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            sidebar.classList.toggle('-translate-x-full');
+            backdrop.classList.toggle('hidden');
+        }
+
+        /* Render Sidebar Menu */
+        function renderSidebar() {
+            const container = document.getElementById('chapter-list');
+            container.innerHTML = '';
+
+            GRAMMAR_DATA.forEach(ch => {
+                const isCompleted = state.completedChapters.includes(ch.chapter);
+                const isActive = state.currentChapter === ch.chapter;
+
+                const btn = document.createElement('button');
+                btn.onclick = () => {
+                    selectChapter(ch.chapter);
+                    if (window.innerWidth < 768) toggleSidebar();
+                };
+                btn.className = `w-full text-left p-3 rounded-xl transition flex items-center justify-between text-sm ${
+                    isActive 
+                        ? 'bg-sakura-500 text-white font-bold shadow-md shadow-sakura-200' 
+                        : 'hover:bg-slate-100 text-slate-700'
+                }`;
+
+                btn.innerHTML = `
+                    <div class="flex items-center gap-2.5 truncate">
+                        <span class="w-6 h-6 rounded-lg text-xs flex items-center justify-center font-bold ${
+                            isActive ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-600'
+                        }">
+                            ${ch.chapter}
+                        </span>
+                        <span class="truncate">${ch.title}</span>
+                    </div>
+                    ${isCompleted ? `<i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400 ${isActive ? 'text-white' : ''}"></i>` : ''}
+                `;
+                container.appendChild(btn);
+            });
+            lucide.createIcons();
+        }
+
+        /* Render Dashboard Grid */
+        function renderDashboard() {
+            const grid = document.getElementById('dashboard-grid');
+            grid.innerHTML = '';
+
+            GRAMMAR_DATA.forEach(ch => {
+                const isCompleted = state.completedChapters.includes(ch.chapter);
+                const card = document.createElement('div');
+                card.className = "bg-white p-5 rounded-2xl border border-slate-200 hover:border-sakura-300 shadow-sm hover:shadow-md transition cursor-pointer flex flex-col justify-between group";
+                card.onclick = () => selectChapter(ch.chapter);
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-xs font-bold text-sakura-600 bg-sakura-100 px-2.5 py-1 rounded-full">Bab ${ch.chapter}</span>
+                            ${isCompleted ? '<span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold flex items-center gap-1"><i data-lucide="check" class="w-3 h-3"></i> Lulus</span>' : ''}
+                        </div>
+                        <h4 class="font-bold text-slate-800 text-base group-hover:text-sakura-600 transition">${ch.title}</h4>
+                        <p class="text-xs text-slate-500 mt-2 line-clamp-2 leading-relaxed">${ch.summary}</p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center text-xs font-semibold text-slate-400 group-hover:text-sakura-500">
+                        <span>${ch.grammarPoints.length} Pola Kalimat</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4 transform group-hover:translate-x-1 transition"></i>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        /* Filter Chapters Search */
+        function filterChapters() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const filtered = GRAMMAR_DATA.filter(ch => 
+                ch.title.toLowerCase().includes(query) || 
+                ch.summary.toLowerCase().includes(query) ||
+                ch.grammarPoints.some(gp => gp.title.toLowerCase().includes(query) || gp.pattern.toLowerCase().includes(query))
+            );
+
+            const container = document.getElementById('chapter-list');
+            container.innerHTML = '';
+
+            filtered.forEach(ch => {
+                const isCompleted = state.completedChapters.includes(ch.chapter);
+                const btn = document.createElement('button');
+                btn.onclick = () => selectChapter(ch.chapter);
+                btn.className = 'w-full text-left p-3 rounded-xl hover:bg-slate-100 text-slate-700 text-sm flex justify-between items-center';
+                btn.innerHTML = `
+                    <span class="truncate">Bab ${ch.chapter}: ${ch.title}</span>
+                    ${isCompleted ? '<i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500"></i>' : ''}
+                `;
+                container.appendChild(btn);
+            });
+            lucide.createIcons();
+        }
+
+        /* Switch Navigation Tab */
+        function switchTab(tab) {
+            document.getElementById('view-dashboard').classList.add('hidden');
+            document.getElementById('view-chapter').classList.add('hidden');
+
+            if (tab === 'dashboard') {
+                document.getElementById('view-dashboard').classList.remove('hidden');
+            } else if (tab === 'chapter') {
+                document.getElementById('view-chapter').classList.remove('hidden');
+            } else if (tab === 'all-cards') {
+                selectChapter(1);
+                setChapterMode('flashcard');
+            }
+        }
+
+        /* Select Chapter & Render Content */
+        function selectChapter(chNum) {
+            state.currentChapter = chNum;
+            state.flashcardIndex = 0;
+            const chData = GRAMMAR_DATA.find(c => c.chapter === chNum);
+
+            // Update UI Header
+            document.getElementById('ch-badge').innerText = `Bab ${chData.chapter}`;
+            document.getElementById('ch-title').innerText = chData.title;
+
+            // Render Materi Cards
+            renderGrammarCards(chData.grammarPoints);
+
+            // Update Nav Buttons
+            document.getElementById('btn-prev-ch').style.visibility = chNum === 1 ? 'hidden' : 'visible';
+            document.getElementById('btn-next-ch').style.visibility = chNum === 25 ? 'hidden' : 'visible';
+
+            // Sidebar highlight
+            renderSidebar();
+
+            // Set Mode default
+            setChapterMode('materi');
+
+            switchTab('chapter');
+        }
+
+        function prevChapter() {
+            if (state.currentChapter > 1) selectChapter(state.currentChapter - 1);
+        }
+
+        function nextChapter() {
+            if (state.currentChapter < 25) selectChapter(state.currentChapter + 1);
+        }
+
+        /* Render Grammar Cards for Current Chapter */
+        function renderGrammarCards(points) {
+            const container = document.getElementById('grammar-cards-container');
+            container.innerHTML = '';
+
+            points.forEach((gp, idx) => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3";
+                
+                card.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-sakura-100 text-sakura-600 text-xs font-bold flex items-center justify-center">
+                            ${idx + 1}
+                        </span>
+                        <h3 class="font-bold text-slate-800 text-base sm:text-lg">${gp.title}</h3>
+                    </div>
+
+                    <!-- KOTAK RUMUS (Berwarna Kuning Terang / High Contrast sesuai permintaan) -->
+                    <div class="p-3.5 bg-slate-950 text-yellow-300 border border-amber-500/30 rounded-xl font-jp text-sm sm:text-base font-bold tracking-wide flex items-center justify-between shadow-sm">
+                        <span class="text-yellow-300 drop-shadow-sm">${gp.pattern}</span>
+                        <span class="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2 py-0.5 rounded font-mono uppercase tracking-wider font-extrabold">Rumus</span>
+                    </div>
+
+                    <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">${gp.meaning}</p>
+
+                    <!-- Example Box -->
+                    <div class="bg-rose-50/50 border border-rose-100 p-4 rounded-xl space-y-1">
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs font-bold text-sakura-600 uppercase tracking-wider">Contoh Kalimat:</span>
+                            <button onclick="playTTS('${gp.example}')" class="p-1.5 bg-white rounded-lg shadow-sm hover:bg-sakura-100 text-sakura-600 transition flex items-center gap-1 text-xs font-semibold">
+                                <i data-lucide="volume-2" class="w-4 h-4"></i> Audio
+                            </button>
+                        </div>
+                        <p class="text-base font-jp font-bold text-slate-800 mt-1">${gp.example}</p>
+                        <p class="text-xs text-slate-500 font-medium italic">${gp.romaji}</p>
+                        <p class="text-xs sm:text-sm text-slate-700 font-medium mt-1">"${gp.translation}"</p>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        /* Chapter Modes: Materi / Flashcard / Quiz */
+        function setChapterMode(mode) {
+            state.activeMode = mode;
+            document.getElementById('subview-materi').classList.add('hidden');
+            document.getElementById('subview-flashcard').classList.add('hidden');
+            document.getElementById('subview-quiz').classList.add('hidden');
+
+            // Reset tab button states
+            ['materi', 'flashcard', 'quiz'].forEach(m => {
+                const btn = document.getElementById(`btn-mode-${m}`);
+                btn.className = "px-3.5 py-1.5 text-xs font-bold rounded-lg transition text-slate-600 hover:text-slate-900";
+            });
+
+            const activeBtn = document.getElementById(`btn-mode-${mode}`);
+            activeBtn.className = "px-3.5 py-1.5 text-xs font-bold rounded-lg transition bg-white text-slate-800 shadow-sm";
+
+            if (mode === 'materi') {
+                document.getElementById('subview-materi').classList.remove('hidden');
+            } else if (mode === 'flashcard') {
+                document.getElementById('subview-flashcard').classList.remove('hidden');
+                renderFlashcard();
+            } else if (mode === 'quiz') {
+                document.getElementById('subview-quiz').classList.remove('hidden');
+                resetQuiz();
+            }
+        }
+
+        /* ==========================================================================
+           4. FLASHCARD ENGINE LOGIC
+           ========================================================================== */
+        function renderFlashcard() {
+            const chData = GRAMMAR_DATA.find(c => c.chapter === state.currentChapter);
+            const points = chData.grammarPoints;
+
+            if (state.flashcardIndex >= points.length) state.flashcardIndex = 0;
+            if (state.flashcardIndex < 0) state.flashcardIndex = points.length - 1;
+
+            const curr = points[state.flashcardIndex];
+
+            // Reset Flip state
+            state.isCardFlipped = false;
+            document.getElementById('flashcard-inner').classList.remove('rotate-y-180');
+
+            document.getElementById('fc-counter').innerText = `${state.flashcardIndex + 1} / ${points.length}`;
+            document.getElementById('fc-front-title').innerText = curr.title;
+            
+            // Rumus Flashcard warna Kuning Emas Terang High Contrast
+            const frontPatternEl = document.getElementById('fc-front-pattern');
+            frontPatternEl.className = "mt-3 inline-block bg-slate-950 text-yellow-300 font-mono text-base px-4 py-2 rounded-xl shadow-inner font-bold border border-amber-500/40";
+            frontPatternEl.innerText = curr.pattern;
+
+            document.getElementById('fc-back-meaning').innerText = curr.meaning;
+            document.getElementById('fc-back-example').innerHTML = `
+                <div class="font-bold text-amber-200">${curr.example}</div>
+                <div class="text-xs text-slate-400 italic mt-0.5">${curr.romaji}</div>
+                <div class="text-xs text-amber-300 mt-1 font-sans">"${curr.translation}"</div>
+            `;
+        }
+
+        function flipCard() {
+            state.isCardFlipped = !state.isCardFlipped;
+            const inner = document.getElementById('flashcard-inner');
+            if (state.isCardFlipped) {
+                inner.classList.add('rotate-y-180');
+            } else {
+                inner.classList.remove('rotate-y-180');
+            }
+        }
+
+        function prevFlashcard() {
+            state.flashcardIndex--;
+            renderFlashcard();
+        }
+
+        function nextFlashcard() {
+            state.flashcardIndex++;
+            renderFlashcard();
+        }
+
+        /* ==========================================================================
+           5. QUIZ ENGINE LOGIC
+           ========================================================================== */
+        function resetQuiz() {
+            document.getElementById('quiz-start-card').classList.remove('hidden');
+            document.getElementById('quiz-active-card').classList.add('hidden');
+            document.getElementById('quiz-result-card').classList.add('hidden');
+            state.quizIndex = 0;
+            state.quizScore = 0;
+        }
+
+        function startQuiz() {
+            document.getElementById('quiz-start-card').classList.add('hidden');
+            document.getElementById('quiz-result-card').classList.add('hidden');
+            document.getElementById('quiz-active-card').classList.remove('hidden');
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const chData = GRAMMAR_DATA.find(c => c.chapter === state.currentChapter);
+            const quizList = chData.quiz;
+            const q = quizList[state.quizIndex];
+
+            document.getElementById('quiz-progress-text').innerText = `Soal ${state.quizIndex + 1} dari ${quizList.length}`;
+            document.getElementById('quiz-question').innerText = q.q;
+
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+
+            document.getElementById('quiz-feedback').classList.add('hidden');
+            const btnNext = document.getElementById('btn-next-question');
+            btnNext.disabled = true;
+            btnNext.className = "px-5 py-2.5 bg-slate-200 text-slate-400 font-bold rounded-xl transition cursor-not-allowed";
+
+            q.options.forEach((opt, idx) => {
+                const optBtn = document.createElement('button');
+                optBtn.className = "w-full text-left p-4 rounded-xl border border-slate-200 hover:border-sakura-400 bg-slate-50 hover:bg-rose-50/30 transition text-sm font-semibold text-slate-700 flex items-center justify-between";
+                optBtn.onclick = () => handleAnswer(idx, q.correct, q.exp, optBtn);
+                optBtn.innerHTML = `
+                    <span>${opt}</span>
+                    <span class="w-5 h-5 rounded-full border border-slate-300 flex items-center justify-center text-xs font-normal">
+                        ${String.fromCharCode(65 + idx)}
+                    </span>
+                `;
+                optionsContainer.appendChild(optBtn);
+            });
+        }
+
+        function handleAnswer(selectedIdx, correctIdx, exp, element) {
+            const optionsContainer = document.getElementById('quiz-options');
+            const buttons = optionsContainer.getElementsByTagName('button');
+
+            // Disable all options
+            for (let btn of buttons) {
+                btn.onclick = null;
+                btn.classList.add('cursor-default');
+            }
+
+            const feedback = document.getElementById('quiz-feedback');
+            feedback.classList.remove('hidden');
+
+            if (selectedIdx === correctIdx) {
+                element.className = "w-full text-left p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-800 text-sm font-bold flex items-center justify-between shadow-sm";
+                feedback.className = "p-4 rounded-xl text-sm font-medium bg-emerald-100 text-emerald-800 border border-emerald-200";
+                feedback.innerHTML = `✨ <strong>Benar!</strong> ${exp}`;
+                state.quizScore++;
+            } else {
+                element.className = "w-full text-left p-4 rounded-xl border-2 border-rose-500 bg-rose-50 text-rose-800 text-sm font-bold flex items-center justify-between";
+                buttons[correctIdx].className = "w-full text-left p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-800 text-sm font-bold flex items-center justify-between";
+                feedback.className = "p-4 rounded-xl text-sm font-medium bg-rose-100 text-rose-800 border border-rose-200";
+                feedback.innerHTML = `❌ <strong>Kurang Tepat.</strong> ${exp}`;
+            }
+
+            const btnNext = document.getElementById('btn-next-question');
+            btnNext.disabled = false;
+            btnNext.className = "px-5 py-2.5 bg-sakura-500 hover:bg-sakura-600 text-white font-bold rounded-xl shadow-lg transition";
+        }
+
+        function nextQuestion() {
+            const chData = GRAMMAR_DATA.find(c => c.chapter === state.currentChapter);
+            state.quizIndex++;
+
+            if (state.quizIndex < chData.quiz.length) {
+                renderQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function finishQuiz() {
+            document.getElementById('quiz-active-card').classList.add('hidden');
+            document.getElementById('quiz-result-card').classList.remove('hidden');
+
+            const chData = GRAMMAR_DATA.find(c => c.chapter === state.currentChapter);
+            const total = chData.quiz.length;
+            const percentage = Math.round((state.quizScore / total) * 100);
+
+            document.getElementById('quiz-score-text').innerText = `Skor kamu: ${percentage} / 100 (${state.quizScore} benar dari ${total} soal)`;
+
+            if (percentage >= 50) {
+                document.getElementById('quiz-score-icon').innerText = "🎉";
+                document.getElementById('quiz-status-text').innerText = "LULUS";
+                document.getElementById('quiz-status-text').className = "text-lg font-extrabold text-emerald-600";
+                
+                // Award XP & Complete Chapter if not completed
+                if (!state.completedChapters.includes(state.currentChapter)) {
+                    state.completedChapters.push(state.currentChapter);
+                    state.xp += 50;
+                    updateUserStats();
+                }
+
+                // Trigger Confetti
+                confetti({
+                    particleCount: 80,
+                    spread: 60,
+                    origin: { y: 0.6 }
+                });
+            } else {
+                document.getElementById('quiz-score-icon').innerText = "💡";
+                document.getElementById('quiz-status-text').innerText = "COBA LAGI";
+                document.getElementById('quiz-status-text').className = "text-lg font-extrabold text-rose-500";
+                document.getElementById('quiz-xp-gained').innerText = "+0 XP";
+            }
+        }
+
+        /* ==========================================================================
+           6. AUDIO TTS SYNTHESIS
+           ========================================================================== */
+        function playTTS(text) {
+            if ('speechSynthesis' in window) {
+                // Cancel previous speech
+                window.speechSynthesis.cancel();
+
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'ja-JP';
+                utterance.rate = 0.85; // Slightly slower for clarity
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert('Browser Anda tidak mendukung fitur Text-to-Speech.');
+            }
+        }
+    </script>
+</body>
+</html>
